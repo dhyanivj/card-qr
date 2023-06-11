@@ -1,33 +1,16 @@
 const express = require('express');
 const path = require('path');
-const QRCode = require('qrcode');
+const axios = require('axios');
 
 const app = express();
 const port = 3000;
 
-// Dummy JSON data representing employee information
-const employees = [
-  {
-    empID: '101',
-    name: 'John Doe',
-    dob: '01-01-1990',
-    department: 'Engineering',
-  },
-  {
-    empID: '102',
-    name: 'Jane Smith',
-    dob: '05-15-1985',
-    department: 'Sales',
-  },
-  // Add more employee objects as needed
-];
-
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/:empID', (req, res) => {
+app.get('/:empID', async (req, res) => {
   try {
     const empID = req.params.empID;
-    const employeeData = fetchEmployeeData(empID);
+    const employeeData = await fetchEmployeeData(empID);
 
     // Generate HTML markup
     const html = `
@@ -73,14 +56,25 @@ app.get('/:empID', (req, res) => {
   }
 });
 
-function fetchEmployeeData(empID) {
-  const employee = employees.find(emp => emp.empID === empID);
+async function fetchEmployeeData(empID) {
+  try {
+    const response = await axios.get('https://script.google.com/macros/s/AKfycbyGURgPlCIsuF3a2mlY_cJJourQbvVIUVUK2KnzWy_JNIp2t5467dtzt62c2m9_pquMcA/exec');
+    const employeesData = response.data.data; // Access the nested 'data' array
 
-  if (employee) {
-    return employee;
+    const employee = employeesData.find(emp => emp.empID == empID);
+    if (employee) {
+      return {
+        empID: employee.empID,
+        name: employee.name,
+        dob: employee.dob,
+        department: employee.department
+      };
+    } else {
+      throw new Error('Employee not found');
+    }
+  } catch (error) {
+    throw new Error('Error fetching employee data');
   }
-
-  throw new Error('Employee not found');
 }
 
 app.listen(port, () => {
