@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require('path');
+const QRCode = require('qrcode');
 
 const app = express();
 const port = 3000;
@@ -19,6 +21,8 @@ const employees = [
   },
   // Add more employee objects as needed
 ];
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/:empID', (req, res) => {
   try {
@@ -47,7 +51,17 @@ app.get('/:empID', (req, res) => {
           </tr>
         </table>
       </div>
+      <div id="qrcode"></div>
+      <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
       <script>
+        const qrCodeContainer = document.getElementById('qrcode');
+        const qrCodeUrl = "https://card-qr.vercel.app/${empID}";
+        const qrcode = new QRCode(qrCodeContainer, {
+          text: qrCodeUrl,
+          width: 128,
+          height: 128,
+        });
+
         window.history.replaceState({}, document.title, "/");
       </script>
     `;
