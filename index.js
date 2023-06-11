@@ -15,6 +15,7 @@ app.get('/:empID', async (req, res) => {
     // Generate HTML markup
     const html = `
       <div>
+      <img src="${employeeData.image}" width="100px" />
         <table>
           <tr>
             <th>Employee ID</th>
@@ -58,7 +59,7 @@ app.get('/:empID', async (req, res) => {
 
 async function fetchEmployeeData(empID) {
   try {
-    const response = await axios.get('https://script.google.com/macros/s/AKfycbyGURgPlCIsuF3a2mlY_cJJourQbvVIUVUK2KnzWy_JNIp2t5467dtzt62c2m9_pquMcA/exec');
+    const response = await axios.get('https://script.google.com/macros/s/AKfycbzKgAupoOPygEkS4pH0ITG-3ik6maCooSoZlgVa0_gXxqapDO94iV_TWI1-vmZniQapNQ/exec');
     const employeesData = response.data.data; // Access the nested 'data' array
 
     const employee = employeesData.find(emp => emp.empID == empID);
@@ -67,7 +68,8 @@ async function fetchEmployeeData(empID) {
         empID: employee.empID,
         name: employee.name,
         dob: employee.dob,
-        department: employee.department
+        department: employee.department,
+        image: employee.image
       };
     } else {
       throw new Error('Employee not found');
