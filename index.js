@@ -47,6 +47,9 @@ app.get('/:empID', (req, res) => {
           </tr>
         </table>
       </div>
+      <script>
+        window.history.replaceState({}, document.title, "/");
+      </script>
     `;
 
     res.send(html);
